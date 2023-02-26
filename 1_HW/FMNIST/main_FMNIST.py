@@ -32,7 +32,7 @@ def main():
 
 
     # ---------- TRAINING OUR SECOND MODEL ----------- #
-    (trainX, trainY), (testX, testY), (validX, validY) = loadFashionMNIST()
+    (trainX, trainY), (testX, testY), (validX, validY) = utils_FMNIST.loadFashionMNIST()
 
     # Second model without regularizers, first hyperparameter set
     fashionModelTwo = model_FMNIST.createModelTwoMNIST(False)
