@@ -1,13 +1,8 @@
 import tensorflow_datasets as tfds
 from collections import Counter
 import tensorflow as tf
-from tensorflow import keras
-from itertools import repeat
+import pickle
 
-# To allow for for map function in 'create_preprocessed_train_set()'
-# the lookup table is made global to still allow for the effeciency
-# increase from the .prefetch() method.
-GRU_LOOKUP_TABLE = None
 
 def load_imdb_data():
   datasets = tfds.load("imdb_reviews", as_supervised=True)
@@ -63,19 +58,46 @@ def create_imdb_lookup_table(truncated_vocabulary, num_oov_buckets, datasets):
   # oov buckets are used to store extra words that don't exist within out dataset
   table = tf.lookup.StaticVocabularyTable(vocab_init, num_oov_buckets)
 
-  # A clumbsy workaround to allow the use of the map function with prefetch
+  # A clumbsy workaround to allow the use of the map function 
   def encode_words(X_batch, y_batch):
     return table.lookup(X_batch), y_batch
 
   # Creating encodings for training set
   train_set = datasets["train"].batch(32).map(preprocess)
-  train_set = train_set.map(encode_words).prefetch(1)
+  train_set = train_set.map(encode_words)
+
+  test_set = datasets["test"]
+  valid_set = test_set.take(10000)
+  test_set = test_set.skip(10000)
+
+  # Creating encodings for validation set
+  valid_set = valid_set.batch(32).map(preprocess)
+  valid_set = valid_set.map(encode_words)
 
   # Creating encodings for test set
-  test_set = datasets["test"].batch(32).map(preprocess)
-  test_set = test_set.map(encode_words).prefetch(1)
+  test_set = test_set.batch(32).map(preprocess)
+  test_set = test_set.map(encode_words)
 
-  return train_set, test_set
+  return train_set, valid_set, test_set 
+
+# @brief Save model training history in dictionary format using `pickle`.
+#
+# @param[in] history History returned when calling fit method on model.
+# @param[in] pkl_file_name A file_name.pkl string to save model training history
+def save_pkl_model_history(history, pkl_file_name):
+  with open(pkl_file_name, 'wb') as file_pi:
+    pickle.dump(history.history, file_pi)
+
+# @brief Load dictionary of model data
+#
+# @param[in] pkl_file_name A .pkl file containing model history
+#     EX: 'model_one_history.pkl'
+#
+# @return Returns a dictionary containing 'loss', 'val_loss', 
+#     'accuracy', and 'val_accuracy'.
+def load_pkl_model_history(pkl_file_name):
+  with open(pkl_file_name, "rb") as file_pi:
+    history = pickle.load(file_pi)
 
 
 # @brief Function for saving keras model with weights
