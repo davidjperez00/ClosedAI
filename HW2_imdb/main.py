@@ -60,7 +60,7 @@ def train_first_model_alt():
     gru_model_one_alt_history = model_file.train_model(compiled_gru_model_one_alt, train_set, valid_set, 5, 20)
     
     # # Save model training history to be used later for plotting training
-    util.save_pkl_model_history(gru_model_one_alt_history, MODEL_ONE_HISTORY_SAVE_PATH)
+    util.save_pkl_model_history(gru_model_one_alt_history, MODEL_ONE_ALT_HISTORY_SAVE_PATH)
 
     # # Save our model for later analysis
     util.save_keras_model(compiled_gru_model_one_alt, MODEL_ONE_ALT_SAVE_PATH)
