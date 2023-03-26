@@ -13,10 +13,12 @@ MODEL_TWO_SAVE_PATH = 'LSTM_model_1'
 MODEL_TWO_HISTORY_SAVE_PATH = 'LSTM_model_1_history.pkl'
 
 def main():
-    train_GRU_model()
     keras.backend.clear_session()
     tf.random.set_seed(42)
     np.random.seed(42)
+
+    train_GRU_model()
+    train_LSTM_model()
 
 def train_GRU_model():
 
