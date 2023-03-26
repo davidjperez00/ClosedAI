@@ -29,3 +29,29 @@ def train_GRU_model(compiled_model, train_set, valid_set):
     history = compiled_model.fit(train_set, validation_data=valid_set, epochs=20, callbacks=[early_stopping_cb])
 
     return history 
+
+
+def create_LSTM_model(vocab_size, num_oov_buckets, embed_size=128):
+    model = keras.models.Sequential([
+        keras.layers.Embedding(vocab_size + num_oov_buckets, embed_size, mask_zero=True, input_shape=[None]),
+        keras.layers.LSTM(128, return_sequences=True),
+        keras.layers.BatchNormalization(),
+        keras.layers.LSTM(128),
+        keras.layers.Dense(1, activation="sigmoid")
+    ])
+
+    return model
+
+
+def compile_LSTM_model(model):
+    model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+
+    return model
+
+
+def train_LSTM_model(compiled_model, train_set, valid_set):
+    early_stopping_cb = keras.callbacks.EarlyStopping(monitor='loss', patience=5)
+
+    history = compiled_model.fit(train_set, validation_data=valid_set, epochs=20, callbacks=[early_stopping_cb])
+
+    return history
