@@ -4,6 +4,18 @@ import tensorflow as tf
 from tensorflow import keras
 
 def create_GRU_model(vocab_size, num_oov_buckets, embed_size = 128):
+    # embed_size = 128
+    model = keras.models.Sequential([
+        keras.layers.Embedding(vocab_size + num_oov_buckets, embed_size, mask_zero = True, input_shape = [None]),
+        keras.layers.GRU(128, return_sequences = True),
+        keras.layers.BatchNormalization(),
+        keras.layers.GRU(128),
+        keras.layers.Dense(1, activation = "sigmoid")
+    ])
+
+    return model
+
+def create_GRU_model_alt(vocab_size, num_oov_buckets, embed_size = 128):
     inputs = keras.Input(shape=(None,))
     embedding = keras.layers.Embedding(vocab_size + num_oov_buckets, 
                                        embed_size, mask_zero = True, 
