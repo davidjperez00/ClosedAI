@@ -15,8 +15,8 @@ class Builder(tfds.core.GeneratorBasedBuilder):
         return self.dataset_info_from_configs(
             features = tfds.features.FeaturesDict({
                 # These are the features of your dataset like images, labels ...
-                'image': tfds.features.Image(shape = (1280, 720, 3)),
-                'label': tfds.features.Image(shape = (1280, 720, 1)),
+                'image': tfds.features.Image(shape = (720, 1280, 3)),
+                'label': tfds.features.Image(shape = (720, 1280, 1)),
             }),
         )
 
