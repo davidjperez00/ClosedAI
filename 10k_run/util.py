@@ -1,5 +1,6 @@
 import tensorflow_datasets as tfds
 import tensorflow as tf
+import pickle
 
 def preprocess(instance):
   # Potential dimmensionality reduction (consider different shapes):
@@ -27,3 +28,39 @@ def load_10k_data():
   test_set = dataset['validate'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
   
   return train_set, validate_set, test_set
+
+# @brief Save model training history in dictionary format using `pickle`.
+#
+# @param[in] history History returned when calling fit method on model.
+# @param[in] pkl_file_name A file_name.pkl string to save model training history
+def save_pkl_model_history(history, pkl_file_name):
+    with open(pkl_file_name, 'wb') as file_pi:
+        pickle.dump(history.history, file_pi)
+
+# @brief Load dictionary of model data
+#
+# @param[in] pkl_file_name A .pkl file containing model history
+#     EX: 'model_one_history.pkl'
+#
+# @return Returns a dictionary containing 'loss', 'val_loss', 
+#     'accuracy', and 'val_accuracy'.
+def load_pkl_model_history(pkl_file_name):
+    with open(pkl_file_name, "rb") as file_pi:
+        history = pickle.load(file_pi)
+
+    return history
+
+# @brief Function for saving keras model with weights
+#
+# @param[in] model Keras model to be saved
+# @param[in] save_path a string denoting save path (Creates folder with this name)
+def save_keras_model(model, save_path):
+    tf.keras.Model.save(model, save_path)
+
+# @brief Function for loading a saved keras model
+#
+# @param[in] model_name A string containing the location of model folder name
+def load_keras_model(model_name):
+    model = tf.keras.models.load_model(model_name)
+
+    return model
