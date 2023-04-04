@@ -23,9 +23,9 @@ def load_10k_data():
   # Retrieve custom tfds of BDD10k datatset
   dataset = tfds.load('bdd')
 
-  train_set = dataset['train'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
-  validate_set = dataset['test'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
-  test_set = dataset['validate'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
+  train_set = dataset['train'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).batch(32).prefetch(tf.data.AUTOTUNE)
+  validate_set = dataset['test'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).batch(32).prefetch(tf.data.AUTOTUNE)
+  test_set = dataset['validate'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).batch(32).prefetch(tf.data.AUTOTUNE)
   
   return train_set, validate_set, test_set
 
