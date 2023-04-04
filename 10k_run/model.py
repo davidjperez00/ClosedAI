@@ -91,9 +91,9 @@ def create_ResNetV2_model():
   up_stack = [
     upsample(512, 3),  # 45x80 -> 90,160
     upsample(256, 3),  
-    upsample(128, 3),  
-    upsample(128, 3),  
-    upsample(128, 3),  
+    upsample(64, 3),  
+    upsample(32, 3),  
+    upsample(18, 3),  
 
   ]
 

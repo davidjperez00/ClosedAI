@@ -15,12 +15,14 @@ def main():
 
   model = model_file.resnet_model(output_channels=1)
   model.compile(optimizer='adam',
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
                 metrics=['accuracy'])
 
 
+  early_stopping_cb = keras.callbacks.EarlyStopping(patience=5)
   model_history = model.fit(train_set, epochs=10,
-                          validation_data=validate_set)
+                          validation_data=validate_set,
+                          callbacks=[early_stopping_cb])
 
   util.save_pkl_model_history(model_history, 'model_1_history.pkl')
                           
@@ -29,4 +31,3 @@ def main():
 
 if __name__ == '__main__':
   main()
-  
