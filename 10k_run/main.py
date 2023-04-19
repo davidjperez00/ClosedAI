@@ -11,7 +11,7 @@ def main():
   np.random.seed(42)
 
   ''' TRANING FIRST MODEL '''
-  train_set, validate_set, test_set = util.load_10k_data()
+  train_set, validate_set = util.load_10k_data()
 
   model = model_file.resnet_model(output_channels=1)
   model.compile(optimizer='adam',
