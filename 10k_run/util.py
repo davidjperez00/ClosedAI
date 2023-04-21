@@ -7,13 +7,13 @@ def preprocess(instance):
   # input_image = tf.image.resize(datapoint['image'], (128, 128))
 
   # Resize each image from (720, 1280) -> (360, 640)
-  resized = tf.image.resize(instance['image'], (360, 640))
+  resized = tf.image.resize(instance['image'], (384, 640))
 
   # Normalize the input to 0-1 range
   input_image = tf.cast(resized, tf.float32) / 255.0
 
   # Resize bitmask's:
-  resized_bitmask = tf.image.resize(instance['label'], (360, 640))
+  resized_bitmask = tf.image.resize(instance['label'], (384, 640))
 
   # Replace pixel values equal to 255 with 0, else 1
   # 255 pixel values arn't lane lines and other pixel
@@ -29,16 +29,17 @@ def preprocess(instance):
 # The dataset contains "train", "validate", and "test" sections
 def load_10k_data():
 
-  train, valid = tfds.load('bdd', split=['train[:1000]', 'test[:1000]'])
+#   train, valid = tfds.load('bdd', split=['train[:1000]', 'test[:1000]'])
 
-  train_set = train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().batch(4)
-  validate_set = valid.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().batch(4)
+#   train_set = train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(700).batch(16)
+#   validate_set = valid.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(700).batch(16)
   
+
 # Full implementation:
    # Retrieve custom tfds of BDD10k datatset
-#   dataset = tfds.load('bdd')
-#   train_set = dataset['train'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).batch(1)
-#   validate_set = dataset['test'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).batch(1)
+  dataset = tfds.load('bdd')
+  train_set = dataset['train'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(1000).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
+  validate_set = dataset['test'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(1000).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
 
 #   test_set = dataset['validate'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).batch(8)
   

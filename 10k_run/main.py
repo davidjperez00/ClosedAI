@@ -24,9 +24,9 @@ def main():
                           validation_data=validate_set,
                           callbacks=[early_stopping_cb])
 
-  util.save_pkl_model_history(model_history, 'model_3_history.pkl')
+  util.save_pkl_model_history(model_history, 'model_d10_full_conv_history.pkl')
                           
-  util.save_keras_model(model, 'model_3')
+  util.save_keras_model(model, 'model_d10_full_conv')
 
 
 if __name__ == '__main__':

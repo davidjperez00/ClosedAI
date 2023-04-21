@@ -70,15 +70,15 @@ def upsample(filters, size, norm_type='batchnorm', apply_dropout=False):
   return result
 
 def create_ResNetV2_model():
-  base_model = tf.keras.applications.ResNet50V2(input_shape=[360, 640, 3], include_top=False)
+  base_model = tf.keras.applications.ResNet50V2(input_shape=[384, 640, 3], include_top=False)
 
   # Use the activations of these layers
   layer_names = [
-    "conv1_conv",          # (None, 360, 640, 64)
-    "conv2_block1_3_conv", # (None, 180, 320, 256)
-    "conv2_block3_2_conv", # (None, 90, 160, 64)
-    # "conv4_block6_1_relu", # (None, 45, 80, 256)
-    # "conv5_block1_1_relu" # (None, 23, 40, 512)
+    "conv1_conv",  # (192,320,64)
+    "conv2_block1_3_conv", # (96, 160, out = 256)
+    "conv3_block3_1_conv", # (48, 80, out=256)
+    "conv4_block1_1_conv", # (24, 40 out=512)
+    "conv5_block1_1_conv", # (12,20, out=1024)
   ]
   
   base_model_outputs = [base_model.get_layer(name).output for name in layer_names]
@@ -89,18 +89,16 @@ def create_ResNetV2_model():
   down_stack.trainable = False
 
   up_stack = [
-    upsample(128, 3),  # 45x80 -> 90,160
+    upsample(256, 3), 
+    upsample(128, 3),  
     upsample(64, 3),  
     upsample(32, 3),  
-    # upsample(16, 3),  
-    # upsample(18, 3),  
-
   ]
 
   return up_stack, down_stack
 
 def resnet_model(output_channels:int):
-  inputs = tf.keras.layers.Input(shape=[360, 640, 3])
+  inputs = tf.keras.layers.Input(shape=[384, 640, 3])
 
   up_stack, down_stack = create_ResNetV2_model()
 
