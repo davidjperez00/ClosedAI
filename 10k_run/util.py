@@ -29,10 +29,10 @@ def preprocess(instance):
 # The dataset contains "train", "validate", and "test" sections
 def load_10k_data():
 
-  train, valid = tfds.load('bdd', split=['train[:100]', 'test[:100]'])
+  train, valid = tfds.load('bdd', split=['train[:1000]', 'test[:1000]'])
 
-  train_set = train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(80).batch(1)
-  validate_set = valid.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(80).batch(1)
+  train_set = train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().batch(4)
+  validate_set = valid.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().batch(4)
   
 # Full implementation:
    # Retrieve custom tfds of BDD10k datatset

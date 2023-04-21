@@ -13,20 +13,20 @@ def main():
   ''' TRANING FIRST MODEL '''
   train_set, validate_set = util.load_10k_data()
 
-  model = model_file.resnet_model(output_channels=1)
+  model = model_file.resnet_model(output_channels=2)
   model.compile(optimizer='adam',
-                loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
 
 
   early_stopping_cb = keras.callbacks.EarlyStopping(patience=5)
-  model_history = model.fit(train_set, epochs=10,
+  model_history = model.fit(train_set, epochs=15,
                           validation_data=validate_set,
                           callbacks=[early_stopping_cb])
 
-  util.save_pkl_model_history(model_history, 'model_1_history.pkl')
+  util.save_pkl_model_history(model_history, 'model_3_history.pkl')
                           
-  util.save_keras_model(model, 'model_1')
+  util.save_keras_model(model, 'model_3')
 
 
 if __name__ == '__main__':
