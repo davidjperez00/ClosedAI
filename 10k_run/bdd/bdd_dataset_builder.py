@@ -22,26 +22,28 @@ class Builder(tfds.core.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         return {
-            'train': self._generate_examples('bdd100k/images/train'),
-            'validate': self._generate_examples('bdd100k/images/val'),
-            'test': self._generate_examples('bdd100k/images/test'),
+            'train': self._generate_examples('bdd100k/images/100k/train', 0, 60000),
+            'validate': self._generate_examples('bdd100k/images/100k/val', 0, 10000),
+            'test': self._generate_examples('bdd100k/images/100k/train', 60000, 10000),
         }
 
-    def _generate_examples(self, path):
-        labelPath = ""
+    def _generate_examples(self, path, start, amount):
         chunks = path.split('/')
-        used = []
-
-        for i in range(len(chunks) - 2):
-            labelPath = labelPath + chunks[i] + "/"
+        labelPath = "bdd100k/labels/lane/masks/" + chunks[len(chunks) - 1]
+        count = 0
+        number = 0
 
         for f in Path(path).glob('*.jpg'):
-            if f.stem in used:
+            if number < start:
+                number += 1
                 continue
-                
-            used.append(f.stem)
-            
+
+            if count >= amount:
+                break
+
+            count += 1
+
             yield f.stem, {
                 'image': f,
-                'label': Path(labelPath + "labels/" + chunks[len(chunks) - 1] + "/" + f.stem + ".png"),
+                'label': Path(labelPath + "/" + f.stem + ".png"),
             }
