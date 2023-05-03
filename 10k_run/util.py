@@ -16,7 +16,7 @@ def preprocess(instance):
   # 255 pixel values arn't lane lines and other pixel
   # values are neglected since other subtasks of lane marking
   # are ignored.
-  bitmask_label = tf.where(resized_bitmask == 255, 1, 0) 
+  bitmask_label = tf.where(resized_bitmask == 255, 0, 1) 
   
   return (input_image, bitmask_label)
 
