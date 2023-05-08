@@ -113,12 +113,24 @@ def resnet_model(output_channels:int):
     concat = tf.keras.layers.Concatenate()
     x = concat([x, skip])
 
+  ## Testing addition of new layers
+  initializer = tf.random_normal_initializer(0., 0.02)
+
+  new_one = tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding='same', kernel_initializer=initializer, activation='relu')(x)
+  batch_one = tf.keras.layers.BatchNormalization()(new_one)
+
+  new_two = tf.keras.layers.Conv2D(filters=32, kernel_size=3, padding='same', kernel_initializer=initializer, activation='relu')(batch_one)
+  batch_two = tf.keras.layers.BatchNormalization()(new_two)
+
+  new_three = tf.keras.layers.Conv2D(filters=8, kernel_size=3, padding='same', kernel_initializer=initializer, activation='relu')(batch_two)
+  batch_three = tf.keras.layers.BatchNormalization()(new_three)
+
   # This is the last layer of the model
   last = tf.keras.layers.Conv2DTranspose(
       filters=output_channels, kernel_size=3, strides=2,
       padding='same')  #64x64 -> 128x128
 
-  x = last(x)
+  x = last(batch_three)
 
   return tf.keras.Model(inputs=inputs, outputs=x)
   

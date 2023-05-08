@@ -3,7 +3,10 @@ import tensorflow as tf
 import pickle
 
 def preprocess(instance):
-  # Resize each image from (720, 1280) -> (384, 640)
+  # Potential dimmensionality reduction (consider different shapes):
+  # input_image = tf.image.resize(datapoint['image'], (128, 128))
+
+  # Resize each image from (720, 1280) -> (360, 640)
   resized = tf.image.resize(instance['image'], (384, 640))
 
   # Normalize the input to 0-1 range
@@ -18,23 +21,28 @@ def preprocess(instance):
   # are ignored.
   bitmask_label = tf.where(resized_bitmask == 255, 0, 1) 
   
+  print("preprocessing")
+
   return (input_image, bitmask_label)
 
 # Loads a subset of the bdd100k dataset and returns it.
 # The dataset contains "train", "validate", and "test" sections
 def load_10k_data():
-  ''' Setup for partial dataset training'''
-  # train, valid = tfds.load('bdd', split=['train[:1000]', 'test[:1000]'])
-  # train_set = train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(700).batch(16)
-  # validate_set = valid.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(700).batch(16)
-    
-  # Full implementation:
-  # Retrieve custom tfds of BDD10k datatset
+
+#   train, valid = tfds.load('bdd', split=['train[:2000]', 'test[:2000]'])
+
+#   train_set = train.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(700).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
+#   validate_set = valid.map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(700).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
+  
+  
+  
+# Full implementation:
+   # Retrieve custom tfds of BDD10k datatset
   dataset = tfds.load('bdd')
   train_set = dataset['train'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(1000).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
   validate_set = dataset['test'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(1000).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
 
-  # test_set = dataset['validate'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(1000).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
+  test_set = dataset['validate'].map(preprocess, num_parallel_calls=tf.data.AUTOTUNE).cache().shuffle(800).batch(32).prefetch(buffer_size=tf.data.AUTOTUNE)
   
   return train_set, validate_set
 
